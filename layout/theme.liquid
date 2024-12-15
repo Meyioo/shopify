@@ -1,36 +1,44 @@
-{% layout 'page' %}
+{% comment %}
+  *** Base page to render all theme contents ***
+  See https://shopify.dev/docs/themes/architecture
+{% endcomment %}
+<!doctype html>
+<html>
+  <head>
+    <!-- Shopify generated header contents -->
+    {% comment %}
+      See https://shopify.dev/docs/themes/architecture/layouts#content_for_header
+    {% endcomment %}
+    {{ content_for_header }}
 
-<!-- Landing Page Header -->
-<div class="landing-page-header" style="text-align: center; padding: 50px; background-color: #f8f8f8;">
-  <h1 style="font-size: 48px; margin-bottom: 20px;">Willkommen in unserem Shop</h1>
-  <p style="font-size: 18px; margin-bottom: 30px;">Erlebe hochwertige Produkte für Deinen Alltag.</p>
-  <a href="/collections/all" style="background-color: #1a73e8; color: #fff; padding: 10px 20px; text-decoration: none; border-radius: 5px; font-size: 16px;">Jetzt shoppen</a>
-</div>
+    <!-- My own global CSS -->
+    {{ 'my_css.css' | asset_url | stylesheet_tag }}
 
-<!-- Feature Section -->
-<div class="landing-page-features" style="display: flex; justify-content: center; gap: 20px; padding: 40px; background-color: #fff;">
-  <!-- Feature 1 -->
-  <div style="text-align: center; max-width: 300px;">
-    <img src="{{ 'feature1.jpg' | asset_url }}" alt="Feature 1" style="width: 100%; height: auto; margin-bottom: 20px;">
-    <h2 style="font-size: 24px; margin-bottom: 10px;">Hochwertige Materialien</h2>
-    <p style="font-size: 16px;">Unsere Produkte werden aus den besten Materialien gefertigt.</p>
-  </div>
-  <!-- Feature 2 -->
-  <div style="text-align: center; max-width: 300px;">
-    <img src="{{ 'feature2.jpg' | asset_url }}" alt="Feature 2" style="width: 100%; height: auto; margin-bottom: 20px;">
-    <h2 style="font-size: 24px; margin-bottom: 10px;">Nachhaltig produziert</h2>
-    <p style="font-size: 16px;">Wir achten auf Umweltfreundlichkeit in jedem Schritt.</p>
-  </div>
-  <!-- Feature 3 -->
-  <div style="text-align: center; max-width: 300px;">
-    <img src="{{ 'feature3.jpg' | asset_url }}" alt="Feature 3" style="width: 100%; height: auto; margin-bottom: 20px;">
-    <h2 style="font-size: 24px; margin-bottom: 10px;">Schneller Versand</h2>
-    <p style="font-size: 16px;">Erhalte Deine Bestellung blitzschnell an Deine Haustür.</p>
-  </div>
-</div>
+    <!-- My own global JavaScript -->
+    {{ 'my_js.js' | asset_url | script_tag }}
 
-<!-- Call-to-Action Section -->
-<div class="landing-page-cta" style="text-align: center; padding: 50px; background-color: #f8f8f8;">
-  <h2 style="font-size: 36px; margin-bottom: 20px;">Bereit für Dein neues Lieblingsprodukt?</h2>
-  <a href="/collections/all" style="background-color: #1a73e8; color: #fff; padding: 15px 30px; text-decoration: none; border-radius: 5px; font-size: 18px;">Jetzt entdecken</a>
-</div>
+    <!-- My own font CSS (if selected only) -->
+    {% comment %}
+      See https://shopify.dev/docs/themes/architecture/settings/fonts
+    {% endcomment %}
+    {% if settings.use_font == true %}
+      {{ 'my_font.css' | asset_url | stylesheet_tag }}
+    {% endif %}
+  </head>
+
+  <body>
+    <div class="my_font my_layout">
+      <!-- My own header group -->
+      {% sections 'header_group' %}
+
+      <!-- Shopify generated template (body) contents -->
+      {% comment %}
+        See https://shopify.dev/docs/themes/architecture/layouts#content_for_layout
+      {% endcomment %}
+      {{ content_for_layout }}
+
+      <!-- My own footer group -->
+      {% sections 'footer_group' %}
+    </div>
+  </body>
+</html>
