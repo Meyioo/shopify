@@ -1,60 +1,99 @@
-# Overview
-This is an _unoffical_ sample code for scratch building [Shopify theme](https://shopify.dev/docs/themes) _without_ [cloning Dawn](https://github.com/Shopify/dawn) for understanding the [theme architecture](https://shopify.dev/docs/themes/architecture) with simpler and fewer [Liquid](https://shopify.dev/docs/api/liquid) code.
+# Dawn
 
-If you are a theme beginner and feel it tough to grab the high volume source code of Dawn, this basic theme may work as a tutorial, but you are expected to be familiar with basic HTML / JavaScript / CSS.
+[![Build status](https://github.com/shopify/dawn/actions/workflows/ci.yml/badge.svg?branch=main)](https://github.com/Shopify/dawn/actions/workflows/ci.yml?query=branch%3Amain)
+[![PRs Welcome](https://img.shields.io/badge/PRs-welcome-brightgreen.svg?color=informational)](/.github/CONTRIBUTING.md)
 
-# Code structure
-The exact same as the [Shopify theme structure](https://shopify.dev/docs/themes/architecture).
+[Getting started](#getting-started) |
+[Staying up to date with Dawn changes](#staying-up-to-date-with-dawn-changes) |
+[Developer tools](#developer-tools) |
+[Contributing](#contributing) |
+[Code of conduct](#code-of-conduct) |
+[Theme Store submission](#theme-store-submission) |
+[License](#license)
 
-For better understanding of the theme mechanism, you should check these first. 
+Dawn represents a HTML-first, JavaScript-only-as-needed approach to theme development. It's Shopify's first source available theme with performance, flexibility, and [Online Store 2.0 features](https://www.shopify.com/partners/blog/shopify-online-store) built-in and acts as a reference for building Shopify themes.
 
-- [Layouts](https://shopify.dev/docs/themes/architecture/layouts) = the theme main files
-- [Templates](https://shopify.dev/docs/themes/architecture/templates) = each page configuration to render the sections below, most of which are `*.json` files (some are `*.liquid`)
-- [Sections](https://shopify.dev/docs/themes/architecture/sections) = each page content written as HTML / JavaScript / CSS with Liquid code, most of which are `*.liquid` files (some are `*.json`)
-- [Section schema](https://shopify.dev/docs/themes/architecture/sections/section-schema) = definitions of how each section works in the [theme editor](https://shopify.dev/docs/themes/tools/online-editor), most of which have [blocks](https://shopify.dev/docs/themes/architecture/sections/section-schema#blocks) for each element
-- [App blocks](https://shopify.dev/docs/themes/architecture/sections/app-blocks) = special blocks in each section to render [theme app extensions](https://shopify.dev/docs/apps/online-store/theme-app-extensions)
-- [Section groups](https://shopify.dev/docs/themes/architecture/section-groups) = groups of sections which split the theme editor left navigation into some parts and work with [the store contextualization](https://shopify.dev/docs/themes/architecture/section-groups#contextual-section-groups) as `*.json` files under `/sections`, not `/templates`.
-- [Dynamic sources](https://shopify.dev/docs/themes/architecture/settings/dynamic-sources) = theme editor function to connect store data instances to liquid objects
+* **Web-native in its purest form:** Themes run on the [evergreen web](https://www.w3.org/2001/tag/doc/evergreen-web/). We leverage the latest web browsers to their fullest, while maintaining support for the older ones through progressive enhancement—not polyfills.
+* **Lean, fast, and reliable:** Functionality and design defaults to “no” until it meets this requirement. Code ships on quality. Themes must be built with purpose. They shouldn’t support each and every feature in Shopify.
+* **Server-rendered:** HTML must be rendered by Shopify servers using Liquid. Business logic and platform primitives such as translations and money formatting don’t belong on the client. Async and on-demand rendering of parts of the page is OK, but we do it sparingly as a progressive enhancement.
+* **Functional, not pixel-perfect:** The Web doesn’t require each page to be rendered pixel-perfect by each browser engine. Using semantic markup, progressive enhancement, and clever design, we ensure that themes remain functional regardless of the browser.
 
-# How to run
-Just for running this theme on your store, simply download this as a zip to upload to your store. However, most of this theme users must be developers who want to modify the code to apply the change immediately, which can be done by [Shopify CLI](https://shopify.dev/docs/themes/tools/cli) with the following steps.
+You can find a more detailed version of our theme code principles in the [contribution guide](https://github.com/Shopify/dawn/blob/main/.github/CONTRIBUTING.md#theme-code-principles).
 
-1. [Install the CLI](https://shopify.dev/docs/themes/tools/cli/install).
+## Getting started
+We recommend using Dawn as a starting point for theme development. [Learn more on Shopify.dev](https://shopify.dev/themes/getting-started/create).
 
-2. Clone this GitHub repo. or download as a ZIP to extract in your PC.
+> If you're building a theme for the Shopify Theme Store, then you can use Dawn as a starting point. However, the theme that you submit needs to be [substantively different from Dawn](https://shopify.dev/themes/store/requirements#uniqueness) so that it provides added value for merchants. Learn about the [ways that you can use Dawn](https://shopify.dev/themes/tools/dawn#ways-to-use-dawn).
 
-3. Go to the directory of this theme above to run [shopify theme dev](https://shopify.dev/docs/themes/tools/cli/commands#dev) in your terminal.
+Please note that the main branch may include code for features not yet released. The "stable" version of Dawn is available in the theme store.
 
-4. If you're asked to login, follow the steps and copy and paste the two URLs shown on the CLI output for theme editor and storefront to your browser address bars.
+## Staying up to date with Dawn changes
 
-# How to install
-The steps above are for development mode that gets terminated once you stop the running, if you install the theme to your store permanently, run [shopify theme push --unpublished](https://shopify.dev/docs/themes/tools/cli/commands#push) to create a new theme named by you in your store (For the second update, the `push` only without the parameter updates the current live theme).
+Say you're building a new theme off Dawn but you still want to be able to pull in the latest changes, you can add a remote `upstream` pointing to this Dawn repository.
 
-# Sample list
-All samples are available at [Wiki](../../wiki).
+1. Navigate to your local theme folder.
+2. Verify the list of remotes and validate that you have both an `origin` and `upstream`:
+```sh
+git remote -v
+```
+3. If you don't see an `upstream`, you can add one that points to Shopify's Dawn repository:
+```sh
+git remote add upstream https://github.com/Shopify/dawn.git
+```
+4. Pull in the latest Dawn changes into your repository:
+```sh
+git fetch upstream
+git pull upstream main
+```
 
-# Trouble shooting 
-- If your change to files are not applied to the theme editor or storefront, make sure the `dev` output of CLI shows `Synced` without errors. Even if you have no errors but the editor or storefront doesn't reflect the change, shutdown the CLI with `Ctrl + C` to relaunch `shopify theme dev` (this sometimes happens when you modify the JSON temaplate or section schema).
+## Developer tools
 
-# TIPS
-- Shopify Liquid has [the powerful internationalization features](https://shopify.dev/docs/themes/markets/multiple-currencies-languages), and your liquid object doesn't need to change the code for translation and currencies.
-For example, once you access the language path like `/ja` in your storefront URL, liquid objects return Japanese translated data such as product titles if they have the translation. Also once you pass the currency and country parameters like `currency=JPY&country=JP`, liquid objects return the price in the specified currency with country. 
-   ```
-     {{ product.title }} returns 'Test product' in `/` in English (when English is the default language), 
-     does 'テスト商品' in `/ja` in Japanese without accepting any language parameters.
+There are a number of really useful tools that the Shopify Themes team uses during development. Dawn is already set up to work with these tools.
 
-     {{ product.price | money_with_currency }} returns $5.00 USD after passing `currency=USD&country=US`,
-     does ¥700 JPY with `currency=JPY&country=JP` without reading those parameters in code.
-   ```
-   If you want to check the behaviors above, try [the translation API](https://shopify.dev/docs/apps/markets/translate-content) or use [translation apps](https://apps.shopify.com/translate-and-adapt), and try [the local currency settings](https://help.shopify.com/en/manual/markets/pricing/set-up-local-currencies).
-- This sample doesn't have [customer my page implementation](https://shopify.dev/docs/themes/architecture/templates/customers-account) because it recommends to use [new customer accounts](https://help.shopify.com/en/manual/customers/customer-accounts/new-customer-accounts) which is not given by theme templates, but Shopify native features like other checkout extensibility.
-- [Sections](https://shopify.dev/docs/themes/architecture/sections) (`*.liquid`) do NOT need their corresponding [templates](https://shopify.dev/docs/themes/architecture/templates) (`*.json`) always. For example, [the recommendation Ajax API](https://shopify.dev/docs/api/ajax/reference/product-recommendations) returns the result as the specified section without its template, and also you can render each section in JavaScript dynamically using [the section rendering API](https://shopify.dev/docs/api/section-rendering).
-- If you create portable sections which can be inserted to all pages or specific ones, don't forget to add `presets` and `enabled_on` fields in the section schema. In this sample, every section can be inserted to a single template only (non portable) except for `list-collections.liquid` which is defined as a portal one for some specified templates in [its section schema](https://github.com/benzookapi/shopify-barebone-theme-sample/blob/main/sections/list-collections.liquid).
-- Some global JavaScript objects like [window.Shopify](https://shopify.dev/docs/api/consent-tracking) are given by Shopify's generated code with [{{ content_for_header }}](https://shopify.dev/docs/themes/architecture/layouts#content_for_header), and  global JS and CSS files are accessible with [the hosted file filters](https://shopify.dev/docs/api/liquid/filters/shopify_asset_url).
-- [Gift card template](https://shopify.dev/docs/themes/architecture/templates/gift-card-liquid) has the specific implementation with its own layout to work with checkout. 
-- [Templates](https://shopify.dev/docs/themes/architecture/templates) used by the theme editor have naming rules to detect [each type](https://shopify.dev/docs/themes/architecture/templates#template-types). For example, if you want to have multiple product templates, their names need to be `product.json` (default), `product.test1.json`, `product.test2.json`, .... etc. You can check it creating a new template from [the code editor](https://shopify.dev/docs/themes/tools/code-editor).
-- Note that if you connect your theme in the store to its GitHub repo., **Shopify bot automatically updates your GitHub code** which sometimes conflicts with your local change.
+### Shopify CLI
 
-# Disclaimer
-- This code is fully _unofficial_ and NOT guaranteed to pass [the public theme review](https://shopify.dev/docs/themes/store/review-process/submit-theme) for Shopify theme store. The official requirements are described [here](https://shopify.dev/docs/themes/store/requirements).
-- If you use this code for your production, **all resposibilties are owned by you**.
+[Shopify CLI](https://github.com/Shopify/shopify-cli) helps you build Shopify themes faster and is used to automate and enhance your local development workflow. It comes bundled with a suite of commands for developing Shopify themes—everything from working with themes on a Shopify store (e.g. creating, publishing, deleting themes) or launching a development server for local theme development.
+
+You can follow this [quick start guide for theme developers](https://shopify.dev/docs/themes/tools/cli) to get started.
+
+### Theme Check
+
+We recommend using [Theme Check](https://github.com/shopify/theme-check) as a way to validate and lint your Shopify themes.
+
+We've added Theme Check to Dawn's [list of VS Code extensions](/.vscode/extensions.json) so if you're using Visual Studio Code as your code editor of choice, you'll be prompted to install the [Theme Check VS Code](https://marketplace.visualstudio.com/items?itemName=Shopify.theme-check-vscode) extension upon opening VS Code after you've forked and cloned Dawn.
+
+You can also run it from a terminal with the following Shopify CLI command:
+
+```bash
+shopify theme check
+```
+
+### Continuous Integration
+
+Dawn uses [GitHub Actions](https://github.com/features/actions) to maintain the quality of the theme. [This is a starting point](https://github.com/Shopify/dawn/blob/main/.github/workflows/ci.yml) and what we suggest to use in order to ensure you're building better themes. Feel free to build off of it!
+
+#### Shopify/lighthouse-ci-action
+
+We love fast websites! Which is why we created [Shopify/lighthouse-ci-action](https://github.com/Shopify/lighthouse-ci-action). This runs a series of [Google Lighthouse](https://developers.google.com/web/tools/lighthouse) audits for the home, product and collections pages on a store to ensure code that gets added doesn't degrade storefront performance over time.
+
+#### Shopify/theme-check-action
+
+Dawn runs [Theme Check](#Theme-Check) on every commit via [Shopify/theme-check-action](https://github.com/Shopify/theme-check-action).
+
+## Contributing
+
+Want to make commerce better for everyone by contributing to Dawn? We'd love your help! Please read our [contributing guide](https://github.com/Shopify/dawn/blob/main/.github/CONTRIBUTING.md) to learn about our development process, how to propose bug fixes and improvements, and how to build for Dawn.
+
+## Code of conduct
+
+All developers who wish to contribute through code or issues, please first read our [Code of Conduct](https://github.com/Shopify/dawn/blob/main/.github/CODE_OF_CONDUCT.md).
+
+## Theme Store submission
+
+The [Shopify Theme Store](https://themes.shopify.com/) is the place where Shopify merchants find the themes that they'll use to showcase and support their business. As a theme partner, you can create themes for the Shopify Theme Store and reach an international audience of an ever-growing number of entrepreneurs.
+
+Ensure that you follow the list of [theme store requirements](https://shopify.dev/themes/store/requirements) if you're interested in becoming a [Shopify Theme Partner](https://themes.shopify.com/services/themes/guidelines) and building themes for the Shopify platform.
+
+## License
+
+Copyright (c) 2021-present Shopify Inc. See [LICENSE](/LICENSE.md) for further details.
